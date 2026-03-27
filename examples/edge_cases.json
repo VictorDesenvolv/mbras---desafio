@@ -1,0 +1,23 @@
+{
+  "messages": [
+    {
+      "user_id": "user_mbras_test",
+      "content": "Este é o teste técnico mbras para avaliação",
+      "timestamp": "2025-03-25T20:00:00Z",
+      "hashtags": []
+    },
+    {
+      "user_id": "user_especialista_007",
+      "content": "muito",
+      "timestamp": "2025-03-25T20:01:00Z",
+      "hashtags": []
+    },
+    {
+      "user_id": "user_MBRAS_007",
+      "content": "não não gostei",
+      "timestamp": "2025-03-25T20:02:00Z",
+      "hashtags": []
+    }
+  ],
+  "time_window_minutes": 30
+}

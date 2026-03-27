@@ -1,0 +1,23 @@
+{
+  "messages": [
+    {
+      "user_id": "user_alice_01",
+      "content": "Adorei o novo produto! Muito bom! #produto #qualidade",
+      "timestamp": "2025-03-25T20:00:00Z",
+      "hashtags": ["#produto", "#qualidade"]
+    },
+    {
+      "user_id": "user_bob_02",
+      "content": "Não gostei do atendimento #atendimento",
+      "timestamp": "2025-03-25T20:01:00Z",
+      "hashtags": ["#atendimento"]
+    },
+    {
+      "user_id": "user_carol_03",
+      "content": "O produto é razoável #produto",
+      "timestamp": "2025-03-25T20:02:00Z",
+      "hashtags": ["#produto"]
+    }
+  ],
+  "time_window_minutes": 60
+}

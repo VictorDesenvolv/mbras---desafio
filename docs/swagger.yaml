@@ -1,0 +1,189 @@
+openapi: 3.0.3
+info:
+  title: MBRAS Sentiment Analysis API
+  description: Real-time sentiment analysis for message feeds
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+paths:
+  /analyze-feed:
+    post:
+      summary: Analyze a message feed
+      description: |
+        Processes a batch of messages and returns sentiment analysis,
+        trending topics, user influence scores, and anomaly detection.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedRequest'
+      responses:
+        '200':
+          description: Successful analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: object
+                    properties:
+                      errors:
+                        type: array
+                        items:
+                          type: string
+        '422':
+          description: Unprocessable Entity (business rule violation)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: UNSUPPORTED_TIME_WINDOW
+components:
+  schemas:
+    Message:
+      type: object
+      required:
+        - user_id
+        - content
+        - timestamp
+      properties:
+        user_id:
+          type: string
+          pattern: '^user_[a-z0-9_]{3,}$'
+          example: user_alice_01
+        content:
+          type: string
+          maxLength: 280
+          example: "Adorei o produto! #top"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-03-25T20:00:00Z"
+        hashtags:
+          type: array
+          items:
+            type: string
+          example: ["#produto", "#qualidade"]
+        reactions:
+          type: integer
+          default: 0
+        shares:
+          type: integer
+          default: 0
+        views:
+          type: integer
+          default: 1
+    FeedRequest:
+      type: object
+      required:
+        - messages
+        - time_window_minutes
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        time_window_minutes:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          example: 60
+    MessageAnalysis:
+      type: object
+      properties:
+        user_id:
+          type: string
+        content:
+          type: string
+        timestamp:
+          type: string
+        sentiment:
+          type: object
+          properties:
+            score:
+              type: number
+            label:
+              type: string
+              enum: [positive, negative, neutral, meta]
+        flags:
+          type: object
+          properties:
+            mbras_employee:
+              type: boolean
+            special_pattern:
+              type: boolean
+            candidate_awareness:
+              type: boolean
+        engagement_score:
+          type: number
+    TrendingTopic:
+      type: object
+      properties:
+        hashtag:
+          type: string
+        score:
+          type: number
+        count:
+          type: integer
+    Anomalies:
+      type: object
+      properties:
+        burst_users:
+          type: array
+          items:
+            type: string
+        alternating_sentiment_users:
+          type: array
+          items:
+            type: string
+        synchronized_groups:
+          type: array
+          items:
+            type: object
+    FeedResponse:
+      type: object
+      properties:
+        analysis:
+          type: object
+          properties:
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/MessageAnalysis'
+            sentiment_distribution:
+              type: object
+              properties:
+                positive:
+                  type: number
+                negative:
+                  type: number
+                neutral:
+                  type: number
+            trending_topics:
+              type: array
+              items:
+                $ref: '#/components/schemas/TrendingTopic'
+            anomalies:
+              $ref: '#/components/schemas/Anomalies'
+            metadata:
+              type: object
+              properties:
+                total_messages:
+                  type: integer
+                messages_in_window:
+                  type: integer
+                time_window_minutes:
+                  type: number
+                analyzed_at:
+                  type: string
